@@ -1,0 +1,113 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Tic-tac-toe (fp)</title>
+    <style>
+      .board {
+        text-align: center;
+        align-items: center;
+        justify-content: center;
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+      }
+      #square {
+        width: 150px;
+        height: 150px;
+        border: 2px solid;
+        color: black;
+        box-shadow: 0 0 0 2px;
+        cursor: pointer;
+        font-size: 120px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+      #square:hover,
+      .restartBtn:hover {
+        background-color: rgb(67, 67, 67);
+      }
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(3, auto);
+        width: 450px;
+        align-content: center;
+      }
+
+      .restartBtn {
+        padding: 25px;
+        font-size: 50px;
+        border: solid 2px;
+        cursor: pointer;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="board">
+      <h1>Tic-tac-toe (functional programming)</h1>
+      <div class="grid">
+        <div id="square">67</div>
+        <div id="square">67</div>
+        <div id="square">67</div>
+        <div id="square">67</div>
+        <div id="square">67</div>
+        <div id="square">67</div>
+        <div id="square">67</div>
+        <div id="square">67</div>
+        <div id="square">67</div>
+      </div>
+      <div class="status-message"></div>
+      <button class="restartBtn">67</button>
+    </div>
+  </body>
+
+  <script>
+    // Start state
+    const state = {
+      board: [null, null, null, null, null, null, null, null, null],
+      winner: null,
+      isDraw: false,
+      turn: "X",
+    };
+    const winningLines = [
+      [0, 1, 2],
+      [3, 4, 5],
+      [6, 7, 8],
+      [0, 3, 6],
+      [1, 4, 7],
+      [2, 5, 8],
+      [0, 4, 8],
+      [2, 4, 6],
+    ];
+    const getStatusOfGame = (board, player) => {
+      // At least one winning line where the same player has all three squares?
+      return winningLines.some((line) =>
+        line.every((i) => board[i] === player),
+      );
+    };
+
+    // Is the board full (no NULLs left)?
+    const isItADraw = (board) => {
+      return board.reduce((acc, curr) => acc && curr !== null, true); // true until proven false by curr (AND operator)
+    };
+
+    const makeAMove = (state, index) => {
+      // Immutability
+      const boardCopy = [
+        ...state.board.slice(0, index), // Make copy of squares in array before the player's click index
+        state.turn, // The square, the player has clicked on
+        ...state.board.slice(index + 1), // Make copy of squares in array after the player's click index
+      ];
+      const haveYouWon = getStatusOfGame(boardCopy, state.turn);
+      const isDraw = !haveYouWon && isItADraw(boardCopy);
+
+      return {
+        board: boardCopy,
+        winner: haveYouWon ? state.turn : null,
+        isDraw: isDraw,
+        turn: state.turn === "X" ? "O" : "X", // Next player is either "X" or "O"
+      };
+    };
+  </script>
+</html>
