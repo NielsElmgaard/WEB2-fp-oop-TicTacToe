@@ -1,0 +1,169 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Tic-tac-toe (oop)</title>
+    <style>
+      .board {
+        text-align: center;
+        align-items: center;
+        justify-content: center;
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+      }
+      .square {
+        width: 150px;
+        height: 150px;
+        border: 2px solid;
+        color: black;
+        box-shadow: 0 0 0 2px;
+        cursor: pointer;
+        font-size: 120px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+      .square:hover,
+      .restartBtn:hover {
+        background-color: rgb(67, 67, 67);
+      }
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(3, auto);
+        width: 450px;
+        align-content: center;
+      }
+
+      #restartBtn {
+        padding: 25px;
+        font-size: 50px;
+        border: solid 2px;
+        cursor: pointer;
+      }
+
+      #status-message {
+        color: rgb(67, 67, 67);
+        font-size: 20px;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="board">
+      <h1>Tic-tac-toe (oop)</h1>
+      <div class="grid">
+        <div class="square"></div>
+        <div class="square"></div>
+        <div class="square"></div>
+        <div class="square"></div>
+        <div class="square"></div>
+        <div class="square"></div>
+        <div class="square"></div>
+        <div class="square"></div>
+        <div class="square"></div>
+      </div>
+      <div id="status-message">It is 6's turn.</div>
+      <button id="restartBtn">6Restart7</button>
+    </div>
+  </body>
+
+  <script>
+    class WinningLines {
+      static lines = [
+        [0, 1, 2],
+        [3, 4, 5],
+        [6, 7, 8],
+        [0, 3, 6],
+        [1, 4, 7],
+        [2, 5, 8],
+        [0, 4, 8],
+        [2, 4, 6],
+      ];
+    }
+    class Game {
+      board;
+      turn;
+      statusMessage;
+      constructor(turn) {
+        this.board = new Board(this);
+        this.turn = turn;
+        this.statusMessage = document.getElementById("status-message");
+      }
+      getGameStatus() {
+        let isWinner = WinningLines.lines.some((line) =>
+          line.every((i) => this.board.squares[i] === this.turn),
+        );
+
+        if (isWinner) return 1;
+
+        return !this.board.squares.some((b) => b === null) ? -1 : 0;
+      }
+
+      makeAMove(index) {
+        if (this.getGameStatus() !== 0) return;
+
+        this.board.squares[index] = this.turn;
+
+        if (this.getGameStatus() === 0) {
+          this.turn = this.turn === "6" ? "7" : "6";
+        }
+        this.renderGame();
+      }
+      renderGame() {
+        this.board.renderBoard();
+        switch (this.getGameStatus()) {
+          case 0:
+            this.statusMessage.innerHTML = "It is " + this.turn + "'s turn.";
+            break;
+          case 1:
+            this.statusMessage.innerHTML = this.turn + " has won!";
+            break;
+          case -1:
+            this.statusMessage.innerHTML = "Tie";
+            break;
+          default:
+            this.statusMessage.innerHTML = "Something 67 happened";
+            break;
+        }
+      }
+
+      restartGame() {
+        this.board = new Board(this);
+        this.turn = "6";
+        this.renderGame();
+      }
+    }
+
+    class Board {
+      squares;
+      squareElements;
+      game;
+      constructor(game) {
+        this.squareElements = Array.from(
+          document.getElementsByClassName("square"),
+        );
+        this.setupController();
+        this.squares = [];
+        for (let i = 0; i < this.squareElements.length; i++) {
+          this.squares.push(null);
+        }
+        this.game = game;
+      }
+      renderBoard() {
+        for (let i = 0; i < this.squares.length; i++) {
+          this.squareElements[i].innerHTML =
+            this.squares[i] === null ? "" : this.squares[i];
+        }
+      }
+      setupController() {
+        this.squareElements.forEach((element) => {
+          element.onclick = () => {
+            this.game.makeAMove(this.squareElements.indexOf(element));
+          };
+        });
+      }
+    }
+    let game = new Game("6");
+    document.getElementById("restartBtn").onclick = () => game.restartGame();
+  </script>
+</html>

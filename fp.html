@@ -43,6 +43,7 @@
 
       #status-message {
         color: rgb(67, 67, 67);
+        font-size: 20px;
       }
     </style>
   </head>
@@ -143,7 +144,7 @@
         state = makeAMove(state, squares.indexOf(element));
         statusMessage.innerHTML =
           state.winner !== null
-            ? "The winner is " + state.winner
+            ? state.winner + " has won!"
             : state.isDraw
               ? "Tie"
               : "It is " + state.turn + "'s turn.";
