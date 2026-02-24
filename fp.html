@@ -11,7 +11,7 @@
         flex-direction: column;
         gap: 20px;
       }
-      #square {
+      .square {
         width: 150px;
         height: 150px;
         border: 2px solid;
@@ -23,7 +23,7 @@
         justify-content: center;
         align-items: center;
       }
-      #square:hover,
+      .square:hover,
       .restartBtn:hover {
         background-color: rgb(67, 67, 67);
       }
@@ -34,11 +34,15 @@
         align-content: center;
       }
 
-      .restartBtn {
+      #restartBtn {
         padding: 25px;
         font-size: 50px;
         border: solid 2px;
         cursor: pointer;
+      }
+
+      #status-message {
+        color: rgb(67, 67, 67);
       }
     </style>
   </head>
@@ -47,28 +51,32 @@
     <div class="board">
       <h1>Tic-tac-toe (functional programming)</h1>
       <div class="grid">
-        <div id="square">67</div>
-        <div id="square">67</div>
-        <div id="square">67</div>
-        <div id="square">67</div>
-        <div id="square">67</div>
-        <div id="square">67</div>
-        <div id="square">67</div>
-        <div id="square">67</div>
-        <div id="square">67</div>
+        <div class="square"></div>
+        <div class="square"></div>
+        <div class="square"></div>
+        <div class="square"></div>
+        <div class="square"></div>
+        <div class="square"></div>
+        <div class="square"></div>
+        <div class="square"></div>
+        <div class="square"></div>
       </div>
-      <div class="status-message"></div>
-      <button class="restartBtn">67</button>
+      <div id="status-message">It is 6's turn.</div>
+      <button id="restartBtn" onclick="restartGame()">6Restart7</button>
     </div>
   </body>
 
   <script>
+    const squares = Array.from(document.getElementsByClassName("square"));
+
+    const statusMessage = document.getElementById("status-message");
+
     // Start state
-    const state = {
+    let state = {
       board: [null, null, null, null, null, null, null, null, null],
       winner: null,
       isDraw: false,
-      turn: "X",
+      turn: "6",
     };
     const winningLines = [
       [0, 1, 2],
@@ -89,10 +97,14 @@
 
     // Is the board full (no NULLs left)?
     const isItADraw = (board) => {
-      return board.reduce((acc, curr) => acc && curr !== null, true); // true until proven false by curr (AND operator)
+      // return board.reduce((acc, curr) => acc && curr !== null, true); // true until proven false by curr (AND operator)
+      return !board.some((b) => b === null);
     };
 
     const makeAMove = (state, index) => {
+      if (state.winner !== null) {
+        return state;
+      }
       // Immutability
       const boardCopy = [
         ...state.board.slice(0, index), // Make copy of squares in array before the player's click index
@@ -102,12 +114,40 @@
       const haveYouWon = getStatusOfGame(boardCopy, state.turn);
       const isDraw = !haveYouWon && isItADraw(boardCopy);
 
+      squares[index].innerHTML = state.turn;
+
       return {
         board: boardCopy,
         winner: haveYouWon ? state.turn : null,
         isDraw: isDraw,
-        turn: state.turn === "X" ? "O" : "X", // Next player is either "X" or "O"
+        turn: state.turn === "6" ? "7" : "6", // Next player is either "6" or "7"... 67
       };
     };
+
+    function restartGame() {
+      state = {
+        board: [null, null, null, null, null, null, null, null, null],
+        winner: null,
+        isDraw: false,
+        turn: "6",
+      };
+      squares.forEach((element) => {
+        element.innerHTML = "";
+      });
+      statusMessage.innerHTML = "It is " + state.turn + "'s turn.";
+    }
+
+    squares.forEach((element) => {
+      element.onclick = () => {
+        if (element.innerHTML !== "") return;
+        state = makeAMove(state, squares.indexOf(element));
+        statusMessage.innerHTML =
+          state.winner !== null
+            ? "The winner is " + state.winner
+            : state.isDraw
+              ? "Tie"
+              : "It is " + state.turn + "'s turn.";
+      };
+    });
   </script>
 </html>
